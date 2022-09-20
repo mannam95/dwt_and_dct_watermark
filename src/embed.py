@@ -3,6 +3,7 @@ import numpy as np
 from PIL import Image
 from dct import dct_2d, idct_2d
 from dwt import dwt_2d, idwt_2d
+from utils import convert_image
 
 
 class Embed():
@@ -37,6 +38,20 @@ class Embed():
 
         return image_array
 
+    def save_image_from_array(self, image_array, file_path):
+        """
+        This function saves the image from the given array.
+
+        :param image_array: image array.
+        :param file_path: path of the file.
+        :return: None.
+        """
+        image_array_copy = image_array.clip(0, 255)
+        image_array_copy = image_array_copy.astype("uint8")
+        img = Image.fromarray(image_array_copy)
+        img.save(file_path)
+
+
 
     def integrate_embedding(self):
         """
@@ -45,6 +60,8 @@ class Embed():
         :param options: config options.
         :return: Returns the embedded watermark image
         """
+        model = 'haar'
+        level = 1
 
         # create the directory for saving embedded images.
         if not os.path.exists(self.options.save_emb_dir_path):
@@ -52,35 +69,25 @@ class Embed():
 
         # This loop runs for all the files presented in the given dirctory
         for file in os.listdir(self.options.emb_dir_path):
-            
-            # open the image.
-            org_img = Image.open(self.options.emb_dir_path + '/' + file)
 
-            # convert the image to grayscale.
-            org_img = np.asarray(org_img.convert(mode='L'))
-
-            # open the watermark image.
-            wat_img = Image.open(self.options.wat_dir_path + '/' + file)
-
-            # convert the watermark to grayscale.
-            wat_img = np.asarray(wat_img.convert(mode='L'))
+            image_array = convert_image(self.options.emb_dir_path + '/' + file, 512)
+            watermark_array = convert_image(self.options.wat_dir_path, self.options.watermark_size)
 
             # Apply 2d-DWT and get coeffs.
-            coeffs_image = dwt_2d(org_img)
+            coeffs_image = dwt_2d(image_array, model, level)
 
             # Apply DCT to DWT - LL coeff.
             dct_array = dct_2d(coeffs_image[0])
 
             # Apply watermark to all blocks of DCT.
-            wat_dct_array = self.embed_watermark_to_all_dct_blocks(dct_array, wat_img)
+            wat_dct_array = self.embed_watermark_to_all_dct_blocks(dct_array, watermark_array)
 
             # Inverse of DCT and update the DWT-LL coeff
             coeffs_image[0] = idct_2d(wat_dct_array)
 
             # Apply Inverse 2d-DWT
-            image_array_H = idwt_2d(coeffs_image, 'haar')
+            image_array_H = idwt_2d(coeffs_image, model)
 
             # Save thq embedded image.
             # plt.imsave(config.embedded_images_path + "test.png", embedded_image, cmap=cm.gray)
-            im = Image.fromarray(image_array_H)
-            im.convert("L").save(self.options.save_emb_dir_path + "/" + file)
+            self.save_image_from_array(image_array_H, self.options.save_emb_dir_path + '/' + file)

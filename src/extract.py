@@ -71,7 +71,10 @@ class Extract():
 
             # Convert the data type to uint8.
             watermark_array =  np.uint8(watermark_array)
+            
+            # Convert the int values to binary.
+            watermark_array = watermark_array > 128
 
             # Save the extracted watermark.
             img = Image.fromarray(watermark_array)
-            img.convert("L").save(self.options.save_ext_dir_path + "/" + file)
+            img.save(self.options.save_ext_dir_path + "/" + file)

@@ -22,7 +22,7 @@ class BaseOptions():
 
         # Watermark Embedding options.
         parser.add_argument('--emb', action='store_true', help='Embedding - True if embedding should happen.')
-        parser.add_argument('--wat_dir_path', type=str, default='../assets/watermarks/watermark_32_32.jpeg', help='Path to the watermark image.')
+        parser.add_argument('--wat_dir_path', type=str, default='../assets/watermarks/org_xut_watermark_32_32.png', help='Path to the watermark image.')
         parser.add_argument('--emb_dir_path', type=str, default='../assets/test_images', help='path of the images which needs to be watermarked.')
         parser.add_argument('--save_emb_dir_path', type=str, default='../assets/embedded_images', help='path of the images where the watermarked images should be stored.')
 
