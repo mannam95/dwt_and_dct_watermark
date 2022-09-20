@@ -28,6 +28,7 @@ class BaseOptions():
 
         # Wastermark Extraction options.
         parser.add_argument('--ext', action='store_true', help='Extraction - True if embedding should happen.')
+        parser.add_argument('--watermark_size', type=int, default=32, help='Size of the watermark.')
         parser.add_argument('--ext_dir_path', type=str, default='../assets/embedded_images', help='path of the images which needs to be extracted.')
         parser.add_argument('--save_ext_dir_path', type=str, default='../assets/extracted_images', help='path of the images where watermark extracted images should be stored.')
         return parser
