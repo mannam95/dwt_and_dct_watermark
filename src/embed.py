@@ -1,9 +1,9 @@
 import os
-import numpy as np
 from PIL import Image
 from dct import dct_2d, idct_2d
 from dwt import dwt_2d, idwt_2d
 from utils import convert_image
+from tqdm import tqdm
 
 
 class Embed():
@@ -68,7 +68,7 @@ class Embed():
             os.makedirs(self.options.save_emb_dir_path)
 
         # This loop runs for all the files presented in the given dirctory
-        for file in os.listdir(self.options.emb_dir_path):
+        for file in tqdm(os.listdir(self.options.emb_dir_path)):
 
             image_array = convert_image(self.options.emb_dir_path + '/' + file, 512)
             watermark_array = convert_image(self.options.wat_dir_path, self.options.watermark_size)

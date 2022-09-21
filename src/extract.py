@@ -1,11 +1,9 @@
 import os
-from matplotlib import cm, pyplot as plt
 import numpy as np
 from PIL import Image
-from pathlib import Path
 from dct import dct_2d
-
 from dwt import dwt_2d
+from tqdm import tqdm
 
 
 class Extract():
@@ -52,7 +50,7 @@ class Extract():
             os.makedirs(self.options.save_ext_dir_path)
 
         # This loop runs for all the files presented in the given dirctory
-        for index, file in enumerate(os.listdir(self.options.ext_dir_path)):
+        for index, file in tqdm(enumerate(os.listdir(self.options.ext_dir_path))):
 
             # open the image.
             img = Image.open(self.options.ext_dir_path + '/' + file)
